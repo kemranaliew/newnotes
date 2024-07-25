@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "755114547112",
+    "project_id": "lokalektinger",
+    "storage_bucket": "lokalektinger.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:755114547112:android:c7b1a52b3731706cf8ef9d",
+        "android_client_info": {
+          "package_name": "at.lokalektinger.lokalektinger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIXKUNaUC1K-NeU22qTLvVAPXu28p49pY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
