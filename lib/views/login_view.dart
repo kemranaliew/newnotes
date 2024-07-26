@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/firebase_options.dart';
+import 'package:lokalektinger/views/register_view.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -92,6 +93,15 @@ late final TextEditingController _password;
               
             }, child: const Text("Logout"),
             ),
+
+            TextButton(onPressed: (){
+              Navigator.of(context).pushNamedAndRemoveUntil("/register/",
+               (route) => false,);
+            },
+            child: const Text ("Not registered yet? Register here!"),
+            
+            )
+
 
           ],
         );

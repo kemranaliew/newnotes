@@ -19,6 +19,11 @@ void main() {
         useMaterial3: true,
       ),
       home: const HomePage(),
+      routes: {
+        "/login/": (context) => const LoginView(),
+        "/register/": (context) => const RegisterView(),
+        "/emailverifiednow/": (context) => const EmailVerifiedNow(),
+      },
     ),
     );
 }
@@ -35,9 +40,17 @@ class HomePage extends StatelessWidget {
     
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Home Page"),
+        title: const Text("Email Verification"),
         backgroundColor: const Color.fromARGB(255, 97, 206, 101),
-        
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LoginView()),
+            );
+          },
+        ),
       ),
       
       body: FutureBuilder(
@@ -126,7 +139,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
     final user = FirebaseAuth.instance.currentUser;
     if (user?.emailVerified ?? false) {
       return const EmailVerifiedNow();
-    
+       
+         
   } else if(user?.emailVerified == null){
       
       return Column(
@@ -165,11 +179,7 @@ class EmailVerifiedNow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text("Email Verification"),
-    backgroundColor: const Color.fromARGB(255, 196, 136, 207),
-    ),
-    
-    body:  Column(
+    return Column(
       children: [
         const Text("Your Email is Verified"),
         TextButton(
@@ -183,9 +193,6 @@ class EmailVerifiedNow extends StatelessWidget {
         ),
         const Text("Your Email is verified")
       ],
-    ),
-
-    
     );
   }
 }
