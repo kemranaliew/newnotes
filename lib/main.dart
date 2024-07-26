@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/firebase_options.dart';
 import 'package:lokalektinger/views/login_view.dart';
+import 'package:lokalektinger/views/register_view.dart';
 
 
 
@@ -23,14 +26,20 @@ void main() {
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
+  
+
   @override
   Widget build(BuildContext context) {
+    
+
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home Page"),
         backgroundColor: const Color.fromARGB(255, 97, 206, 101),
         
       ),
+      
       body: FutureBuilder(
         future: Firebase.initializeApp(
            options: DefaultFirebaseOptions.currentPlatform,
@@ -38,24 +47,29 @@ class HomePage extends StatelessWidget {
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             
-    
-            case ConnectionState.done:
-          //   final user = FirebaseAuth.instance.currentUser;
-          //   if (user?.emailVerified ?? false) {
+            case ConnectionState.done:            
+            final user = FirebaseAuth.instance.currentUser;
+            user?.reload();
+            print(user);
+            print("hallo");
+            
+            if (user?.emailVerified ?? false) {
               
+              return const EmailVerifiedNow();
+
               
-          //   } else {
+            } else {
   
-          //    return const VerifyEmailView();
-          //   }
-          // return const Text("Done!");
-          return const LoginView();
+             return const VerifyEmailView();
+            }
+            
           default:
         
         return const Text("Loading...");
           }
           
-        },
+        }
+  
       )
     );
   }
@@ -71,9 +85,66 @@ class VerifyEmailView extends StatefulWidget {
 }
 
 class _VerifyEmailViewState extends State<VerifyEmailView> {
+  Timer? _timer;
+  bool _isEmailVerified = false;
+  
+
+
+  @override
+  void initState() {
+    super.initState();
+    _startEmailVerificationCheck();
+  }
+
+  void _startEmailVerificationCheck() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      final user = FirebaseAuth.instance.currentUser;
+      await user?.reload();
+      print(user);
+      if (user?.emailVerified ?? false) {
+        timer.cancel();
+        setState(() {
+          _isEmailVerified = true;
+        
+        });
+        ;
+      } else if (user == null) {
+        timer.cancel();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    final user = FirebaseAuth.instance.currentUser;
+    if (user?.emailVerified ?? false) {
+      return const EmailVerifiedNow();
+    
+  } else if(user?.emailVerified == null){
+      
+      return Column(
+      children: [
+        const Text("You are not logged in!"),
+        TextButton(onPressed: () async {
+        Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const LoginView()),
+  );
+      }, 
+      child: const Text("You need to Login or Register"),),
+      ],
+      );
+
+  } else {
+    return Column(
+      children: [
         const Text("Please verify your email address:"),
         TextButton(
           onPressed: () async {
@@ -81,11 +152,50 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
             await user?.sendEmailVerification();
           },
           child: const Text("Send email verification"),
-        )
+        ),
+        const Text("Your Email is not verified")
       ],
       );
   }
+  }
 }
+
+class EmailVerifiedNow extends StatelessWidget {
+  const EmailVerifiedNow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: AppBar(title: const Text("Email Verification"),
+    backgroundColor: const Color.fromARGB(255, 196, 136, 207),
+    ),
+    
+    body:  Column(
+      children: [
+        const Text("Your Email is Verified"),
+        TextButton(
+          onPressed: () { 
+            Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const LoginView()),
+  );
+          },
+          child: const Text("Back to Login"),
+        ),
+        const Text("Your Email is verified")
+      ],
+    ),
+
+    
+    );
+  }
+}
+
+
+
+//Class EmailVarifiedNow!
+
+
+
 
 
 
