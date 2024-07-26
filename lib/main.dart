@@ -135,7 +135,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
         TextButton(onPressed: () async {
         Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => const LoginView()),
+    MaterialPageRoute(builder: (context) => const RegisterView()),
   );
       }, 
       child: const Text("You need to Login or Register"),),

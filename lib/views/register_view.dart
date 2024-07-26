@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/firebase_options.dart';
+import 'package:lokalektinger/main.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -83,6 +84,9 @@ late final TextEditingController _password;
                   print(e.code);
                 }
               }
+              Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const HomePage()),);
               
             }, child: const Text("Register")
             ),
