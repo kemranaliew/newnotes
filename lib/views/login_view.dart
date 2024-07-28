@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/firebase_options.dart';
-import 'package:lokalektinger/views/register_view.dart';
+import 'dart:developer' as devtools show log;
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -71,29 +71,17 @@ late final TextEditingController _password;
                 await FirebaseAuth.instance.signInWithEmailAndPassword(
                 email: email, 
                 password: password);
-                print(userCredential);
+                devtools.log(userCredential.toString());
                 } on FirebaseAuthException catch (e) {
-                  print(e.code);
+                  devtools.log(e.code);
                 } 
+
+                Navigator.of(context).pushNamedAndRemoveUntil("/notesview/", (route) => false,);
               
               
             }, child: const Text("Login"),
+            
             ),
-            TextButton(
-              onPressed: () async {
-              
-              
-              try{final userCredential = 
-                await FirebaseAuth.instance.signOut();
-                
-                } on FirebaseAuthException catch (e) {
-                  print(e.code);
-                } 
-              
-              
-            }, child: const Text("Logout"),
-            ),
-
             TextButton(onPressed: (){
               Navigator.of(context).pushNamedAndRemoveUntil("/register/",
                (route) => false,);
