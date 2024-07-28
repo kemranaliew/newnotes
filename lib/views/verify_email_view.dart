@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/firebase_options.dart';
+import 'package:lokalektinger/main.dart';
 import 'package:lokalektinger/views/email_verified_now.dart';
 import 'package:lokalektinger/views/register_view.dart';
 import 'dart:developer' as devtools show log;

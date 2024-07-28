@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/constants/routes.dart';
 import 'package:lokalektinger/firebase_options.dart';
-import 'dart:developer' as devtools show log;
+import 'package:lokalektinger/utilities/show_error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
@@ -69,23 +69,25 @@ late final TextEditingController _password;
               final email =_email.text;
               final password = _password.text;
               try{
-                final userCredential = 
+                
                 await FirebaseAuth.instance.createUserWithEmailAndPassword(
                 email: email, 
                 password: password);
-                devtools.log(userCredential.toString());
+                Navigator.of(context).pushNamed(homePageRoute);
               } on FirebaseAuthException catch (e) {
                 if (e.code == "weak-password") {
-                  devtools.log("weak password");
+                  await showErrorDialog(context, "Weak password");
                 } else if (e.code == "email-already-in-use") {
-                  devtools.log("Email Is Already In Use");
+                  await showErrorDialog(context, "Email is already in use");
                 } else if (e.code == "inavlid-email") {
-                  devtools.log("Invalid Email Entered");
+                  await showErrorDialog(context, "Invalid Email entered!");
                 } else {
-                  devtools.log(e.code);
+                    await showErrorDialog(context, "Error ${e.code}",);
+                  }
+                } catch (e) {
+                  await showErrorDialog(context, e.toString(),);
                 }
-              }
-              Navigator.of(context).pushNamedAndRemoveUntil(homePageRoute, (_) => false,);
+              
               
             }, child: const Text("Register")
             ),

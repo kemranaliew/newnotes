@@ -5,6 +5,8 @@ import 'package:lokalektinger/constants/routes.dart';
 import 'package:lokalektinger/firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
+import 'package:lokalektinger/utilities/show_error_dialog.dart';
+
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
 
@@ -73,7 +75,7 @@ late final TextEditingController _password;
                 email: email, 
                 password: password);
                 devtools.log(userCredential.toString());
-                Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false,);
+                Navigator.of(context).pushNamedAndRemoveUntil(homePageRoute, (route) => false,);
                 } on FirebaseAuthException catch (e) {
                   if(e.code == "invalid-credential"){
                     await showErrorDialog(context, "Invalid Credentials",);
@@ -111,21 +113,3 @@ late final TextEditingController _password;
   }  
 }
 
-Future<void> showErrorDialog(
-  BuildContext context,
- String text,
- ){
-  return showDialog(context: context,
-   builder: (context){
-    return AlertDialog(
-      title: const Text("An error occured"),
-      content: Text(text),
-      actions: [
-        TextButton(onPressed: (){
-          Navigator.of(context).pop();
-        },
-         child: const Text("OK"))
-      ],
-    );
-   },);
- }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lokalektinger/main.dart';
 import 'package:lokalektinger/views/login_view.dart';
 
 class EmailVerifiedNow extends StatelessWidget {
@@ -14,10 +15,10 @@ class EmailVerifiedNow extends StatelessWidget {
           onPressed: () { 
             Navigator.push(
     context,
-    MaterialPageRoute(builder: (context) => const LoginView()),
+    MaterialPageRoute(builder: (context) => const HomePage()),
   );
           },
-          child: const Text("Back to Login"),
+          child: const Text("Go to Notes!"),
         ),
         const Text("Your Email is verified")
       ],
