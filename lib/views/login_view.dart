@@ -73,11 +73,17 @@ late final TextEditingController _password;
                 email: email, 
                 password: password);
                 devtools.log(userCredential.toString());
-                } on FirebaseAuthException catch (e) {
-                  devtools.log(e.code);
-                } 
-
                 Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false,);
+                } on FirebaseAuthException catch (e) {
+                  if(e.code == "invalid-credential"){
+                    await showErrorDialog(context, "Invalid Credentials",);
+                  } else {
+                    await showErrorDialog(context, "Error ${e.code}",);
+                  }
+                } catch (e) {
+                  await showErrorDialog(context, e.toString(),);
+                }
+
               
               
             }, child: const Text("Login"),
@@ -104,3 +110,22 @@ late final TextEditingController _password;
     );
   }  
 }
+
+Future<void> showErrorDialog(
+  BuildContext context,
+ String text,
+ ){
+  return showDialog(context: context,
+   builder: (context){
+    return AlertDialog(
+      title: const Text("An error occured"),
+      content: Text(text),
+      actions: [
+        TextButton(onPressed: (){
+          Navigator.of(context).pop();
+        },
+         child: const Text("OK"))
+      ],
+    );
+   },);
+ }
