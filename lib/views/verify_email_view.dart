@@ -16,6 +16,7 @@ class VerifyEmailView extends StatefulWidget {
 
 class _VerifyEmailViewState extends State<VerifyEmailView> {
   Timer? _timer;
+  // ignore: unused_field
   bool _isEmailVerified = false;
   
 

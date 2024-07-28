@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lokalektinger/constants/routes.dart';
 import 'package:lokalektinger/firebase_options.dart';
 import 'dart:developer' as devtools show log;
 
@@ -76,14 +77,14 @@ late final TextEditingController _password;
                   devtools.log(e.code);
                 } 
 
-                Navigator.of(context).pushNamedAndRemoveUntil("/notesview/", (route) => false,);
+                Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false,);
               
               
             }, child: const Text("Login"),
             
             ),
             TextButton(onPressed: (){
-              Navigator.of(context).pushNamedAndRemoveUntil("/register/",
+              Navigator.of(context).pushNamedAndRemoveUntil(registerRoute,
                (route) => false,);
             },
             child: const Text ("Not registered yet? Register here!"),

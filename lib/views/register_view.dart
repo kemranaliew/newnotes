@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lokalektinger/constants/routes.dart';
 import 'package:lokalektinger/firebase_options.dart';
-import 'package:lokalektinger/views/verify_email_view.dart';
 import 'dart:developer' as devtools show log;
 
 class RegisterView extends StatefulWidget {
@@ -85,14 +85,12 @@ late final TextEditingController _password;
                   devtools.log(e.code);
                 }
               }
-              Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const VerifyEmailView()),);
+              Navigator.of(context).pushNamedAndRemoveUntil(homePageRoute, (_) => false,);
               
             }, child: const Text("Register")
             ),
             TextButton(onPressed: (){
-              Navigator.of(context).pushNamedAndRemoveUntil("/login/",
+              Navigator.of(context).pushNamedAndRemoveUntil(loginRoute,
                (route) => false,);
             },
             child: const Text ("Already registered? Login here!"),

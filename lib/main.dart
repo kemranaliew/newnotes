@@ -1,15 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lokalektinger/constants/routes.dart';
 import 'package:lokalektinger/firebase_options.dart';
 import 'package:lokalektinger/views/email_verified_now.dart';
 import 'package:lokalektinger/views/login_view.dart';
 import 'package:lokalektinger/views/register_view.dart';
 import 'package:lokalektinger/views/verify_email_view.dart';
-
-
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,10 +22,11 @@ void main() async {
       ),
       home: const NotesView(),
       routes: {
-        "/login/": (context) => const LoginView(),
-        "/register/": (context) => const RegisterView(),
-        "/emailverifiednow/": (context) => const EmailVerifiedNow(),
-        "/notesview/": (context) => const NotesView(),
+        loginRoute: (context) => const LoginView(),
+        registerRoute: (context) => const RegisterView(),
+        emailVerifiedRoute: (context) => const EmailVerifiedNow(),
+        notesRoute: (context) => const NotesView(),
+        homePageRoute: (context) => const HomePage(),
       },
     ),
     );
@@ -101,7 +99,7 @@ class _NotesViewState extends State<NotesView> {
                 final shouldLogout = await showLogOutDialog(context);
                 if (shouldLogout) {
                   await FirebaseAuth.instance.signOut();
-                  Navigator.of(context).pushNamedAndRemoveUntil("/login/", (_) 
+                  Navigator.of(context).pushNamedAndRemoveUntil(loginRoute, (_) 
                   => false,
                   );
                 }
