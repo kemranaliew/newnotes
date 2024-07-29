@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/main.dart';
-import 'package:lokalektinger/views/login_view.dart';
 
 class EmailVerifiedNow extends StatelessWidget {
   const EmailVerifiedNow({super.key});

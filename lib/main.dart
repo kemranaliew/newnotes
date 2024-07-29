@@ -20,7 +20,7 @@ void main() async {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const NotesView(),
+      home: const HomePage(),
       routes: {
         loginRoute: (context) => const LoginView(),
         registerRoute: (context) => const RegisterView(),
@@ -54,14 +54,14 @@ class HomePage extends StatelessWidget {
             user?.reload();
             
             
-            if (user?.emailVerified ?? false) {
-              
-              return const NotesView();
-
-              
+            if (user !=  null){
+              if(user.emailVerified){
+                return const NotesView();
+              } else {
+                return const VerifyEmailView();
+              }
             } else {
-  
-             return const VerifyEmailView();
+              return  const LoginView();
             }
             
           default:

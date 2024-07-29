@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lokalektinger/constants/routes.dart';
 import 'package:lokalektinger/firebase_options.dart';
-import 'package:lokalektinger/main.dart';
 import 'package:lokalektinger/views/email_verified_now.dart';
 import 'package:lokalektinger/views/register_view.dart';
 import 'dart:developer' as devtools show log;
@@ -87,7 +87,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   } else {
     return Column(
       children: [
-        const Text("Please verify your email address:"),
+        const Text("We've sent you an email verification. Please open it to verify your account!"),
+        const Text("If you haven't received any email yet, press the button below."),
         TextButton(
           onPressed: () async {
             final user = FirebaseAuth.instance.currentUser;
@@ -95,7 +96,13 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
           },
           child: const Text("Send email verification"),
         ),
-        const Text("Your Email is not verified")
+        const Text("Your Email is not verified"),
+        TextButton(
+          onPressed: () async {
+            await FirebaseAuth.instance.signOut();
+            Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (_) => false);
+          },
+          child: const Text("Restart"))
       ],
       );
   }
