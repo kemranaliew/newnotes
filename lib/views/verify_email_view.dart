@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/constants/routes.dart';
-import 'package:lokalektinger/firebase_options.dart';
+import 'package:lokalektinger/services/auth/auth_service.dart';
 import 'package:lokalektinger/views/email_verified_now.dart';
 import 'package:lokalektinger/views/register_view.dart';
 import 'dart:developer' as devtools show log;
@@ -19,8 +17,6 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   Timer? _timer;
   // ignore: unused_field
   bool _isEmailVerified = false;
-  
-
 
   @override
   void initState() {
@@ -30,16 +26,14 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
 
   void _startEmailVerificationCheck() {
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
-      final user = FirebaseAuth.instance.currentUser;
-      await user?.reload();
+      await AuthService.firebase().reloadUser();
+      final user = AuthService.firebase().currentUser;
       devtools.log(user.toString());
-      if (user?.emailVerified ?? false) {
+      if (user?.isEmailVerified ?? false) {
         timer.cancel();
         setState(() {
           _isEmailVerified = true;
-        
         });
-        ;
       } else if (user == null) {
         timer.cancel();
       }
@@ -52,62 +46,63 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text("Email Verification"),
-    backgroundColor: Colors.green,),
-
-    body: FutureBuilder(
-        future: Firebase.initializeApp(
-           options: DefaultFirebaseOptions.currentPlatform,
-         ),
-        builder: (context, snapshot) {
-          
-    final user = FirebaseAuth.instance.currentUser;
-    if (user?.emailVerified ?? false) {
-      return const EmailVerifiedNow();
-       
-         
-  } else if(user?.emailVerified == null){
-      
-      return Column(
-      children: [
-        const Text("You are not logged in!"),
-        TextButton(onPressed: () async {
-        Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const RegisterView()),
-  );
-      }, 
-      child: const Text("You need to Login or Register"),),
-      ],
-      );
-
-  } else {
-    return Column(
-      children: [
-        const Text("We've sent you an email verification. Please open it to verify your account!"),
-        const Text("If you haven't received any email yet, press the button below."),
-        TextButton(
-          onPressed: () async {
-            final user = FirebaseAuth.instance.currentUser;
-            await user?.sendEmailVerification();
-          },
-          child: const Text("Send email verification"),
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Email Verification"),
+          backgroundColor: Colors.green,
         ),
-        const Text("Your Email is not verified"),
-        TextButton(
-          onPressed: () async {
-            await FirebaseAuth.instance.signOut();
-            Navigator.of(context).pushNamedAndRemoveUntil(registerRoute, (_) => false);
-          },
-          child: const Text("Restart"))
-      ],
-      );
-  }
-        }
-  )
-    );
+        body: FutureBuilder(
+            future: AuthService.firebase().initialize(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                final user = AuthService.firebase().currentUser;
+                if (user?.isEmailVerified ?? false) {
+                  return const EmailVerifiedNow();
+                } else if (user == null) {
+                  return Column(
+                    children: [
+                      const Text("You are not logged in!"),
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const RegisterView()),
+                          );
+                        },
+                        child: const Text("You need to Login or Register"),
+                      ),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      const Text(
+                          "We've sent you an email verification. Please open it to verify your account!"),
+                      const Text(
+                          "If you haven't received any email yet, press the button below."),
+                      TextButton(
+                        onPressed: () async {
+                          await AuthService.firebase().sendEmailVerification();
+                        },
+                        child: const Text("Send email verification"),
+                      ),
+                      const Text("Your Email is not verified"),
+                      TextButton(
+                          onPressed: () async {
+                            await AuthService.firebase().logOut();
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                registerRoute, (_) => false);
+                          },
+                          child: const Text("Restart"))
+                    ],
+                  );
+                }
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            }));
   }
 }

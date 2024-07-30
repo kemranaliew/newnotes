@@ -6,16 +6,15 @@ class EmailVerifiedNow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: [
         const Text("Your Email is Verified"),
         TextButton(
-          onPressed: () { 
+          onPressed: () {
             Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const HomePage()),
-  );
+              context,
+              MaterialPageRoute(builder: (context) => const HomePage()),
+            );
           },
           child: const Text("Go to Notes!"),
         ),

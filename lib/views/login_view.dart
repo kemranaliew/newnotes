@@ -1,8 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lokalektinger/constants/routes.dart';
-import 'package:lokalektinger/firebase_options.dart';
+import 'package:lokalektinger/services/auth/auth_exceptions.dart';
+import 'package:lokalektinger/services/auth/auth_service.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:lokalektinger/utilities/show_error_dialog.dart';
@@ -16,9 +15,9 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   late final TextEditingController _email;
-late final TextEditingController _password;
+  late final TextEditingController _password;
 
-@override
+  @override
   void initState() {
     _email = TextEditingController();
     _password = TextEditingController();
@@ -35,81 +34,83 @@ late final TextEditingController _password;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login"),
-      
+      appBar: AppBar(
+        title: const Text("Login"),
       ),
       body: FutureBuilder(
-        future: Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        ), 
-        builder: (context, snapshot) { 
+        future: AuthService.firebase().initialize(),
+        builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
-            return Column(
-          children: [
-            TextField(
-              controller: _email,
-              enableSuggestions: false,
-              autocorrect: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
-                hintText: "Enter Your Email Here",
-              ),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              enableSuggestions: false,
-              autocorrect: false,
-              decoration: const InputDecoration(
-                hintText: "Enter Your Password Here",
-              ),
-            ),
-            TextButton(
-              onPressed: () async {
-              final email =_email.text;
-              final password = _password.text;
-              
-              try{final userCredential = 
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
-                email: email, 
-                password: password);
-                devtools.log(userCredential.toString());
-                Navigator.of(context).pushNamedAndRemoveUntil(homePageRoute, (route) => false,);
-                } on FirebaseAuthException catch (e) {
-                  if(e.code == "invalid-credential"){
-                    await showErrorDialog(context, "Invalid Credentials",);
-                  } else {
-                    await showErrorDialog(context, "Error ${e.code}",);
-                  }
-                } catch (e) {
-                  await showErrorDialog(context, e.toString(),);
-                }
+              return Column(
+                children: [
+                  TextField(
+                    controller: _email,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
+                      hintText: "Enter Your Email Here",
+                    ),
+                  ),
+                  TextField(
+                    controller: _password,
+                    obscureText: true,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    decoration: const InputDecoration(
+                      hintText: "Enter Your Password Here",
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final email = _email.text;
+                      final password = _password.text;
 
-              
-              
-            }, child: const Text("Login"),
-            
-            ),
-            TextButton(onPressed: (){
-              Navigator.of(context).pushNamedAndRemoveUntil(registerRoute,
-               (route) => false,);
-            },
-            child: const Text ("Not registered yet? Register here!"),
-            
-            )
-
-
-          ],
-        );
+                      try {
+                        
+                        final userCredential = await AuthService.firebase().logIn(
+                          email: email,
+                          password: password,
+                        );
+                        devtools.log(userCredential.toString());
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                          homePageRoute,
+                          (route) => false,
+                        );
+                      } on WrongCredentialsAuthException {
+                         await showErrorDialog(
+                            context,
+                            "Invalid Credentials",
+                          );
+                      } on GenericAuthException {
+                        await showErrorDialog(
+                            context,
+                            "Authentication Error",
+                          );
+                      };
+                      
+                     
+                    },
+                    child: const Text("Login"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                        registerRoute,
+                        (route) => false,
+                      );
+                    },
+                    child: const Text("Not registered yet? Register here!"),
+                  )
+                ],
+              );
 
             default:
-            return const Text("Loading...");
+              return const Text("Loading...");
           }
-         },
-        ),
-    
+        },
+      ),
     );
-  }  
+  }
 }
-
