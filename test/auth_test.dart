@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:lokalektinger/services/auth/auth_exceptions.dart';
 import 'package:lokalektinger/services/auth/auth_provider.dart';
 import 'package:lokalektinger/services/auth/auth_user.dart';
