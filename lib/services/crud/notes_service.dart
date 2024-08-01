@@ -2,49 +2,32 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:lokalektinger/services/crud/crud_exceptions.dart';
 import "package:sqflite/sqflite.dart";
 import 'package:path_provider/path_provider.dart'
     show MissingPlatformDirectoryException, getApplicationDocumentsDirectory;
 import 'package:path/path.dart' show join;
 
-class DatabaseAlreadyOpenException implements Exception {}
-
-class UnableToGetDocumentsDirectory implements Exception {}
-
-class DatabaseIsNotOpen implements Exception {}
-
-class CouldNotDeleteUser implements Exception {}
-
-class UserAlreadyExists implements Exception {}
-
-class CouldNotFindUser implements Exception {}
-
-class CouldNotDeleteNote implements Exception {}
-
-class CouldNotFindNote implements Exception {}
-
-class CouldNotUpdateNote implements Exception {}
-
 class NotesService {
   Database? _db;
 
-Future<DatabaseNote> updateNote({required DatabaseNote note, required String text}) async {
-  final db = _getDatabaseOrThrow();
+  Future<DatabaseNote> updateNote(
+      {required DatabaseNote note, required String text}) async {
+    final db = _getDatabaseOrThrow();
 
-await getNote(id: note.id);
+    await getNote(id: note.id);
 
- final updatesCount = await db.update(noteTable, {
-    textColumn: text,
-    isSyncedWithCloudColumn: 0,
-  });
+    final updatesCount = await db.update(noteTable, {
+      textColumn: text,
+      isSyncedWithCloudColumn: 0,
+    });
 
-if (updatesCount == 0){
-  throw CouldNotUpdateNote();
-} else {
-  return await getNote(id: note.id);
-}
-
-}
+    if (updatesCount == 0) {
+      throw CouldNotUpdateNote();
+    } else {
+      return await getNote(id: note.id);
+    }
+  }
 
   Future<Iterable<DatabaseNote>> getAllNotes() async {
     final db = _getDatabaseOrThrow();
