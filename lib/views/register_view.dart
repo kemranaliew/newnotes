@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lokalektinger/constants/routes.dart';
 import 'package:lokalektinger/services/auth/auth_exceptions.dart';
 import 'package:lokalektinger/services/auth/auth_service.dart';
-import 'package:lokalektinger/utilities/show_error_dialog.dart';
+import 'package:lokalektinger/utilities/dialogs/error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
