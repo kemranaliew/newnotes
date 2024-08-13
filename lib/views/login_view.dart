@@ -5,10 +5,10 @@ import 'package:lokalektinger/services/auth/auth_exceptions.dart';
 import 'package:lokalektinger/services/auth/auth_service.dart';
 import 'package:lokalektinger/services/auth/bloc/auth_bloc.dart';
 import 'package:lokalektinger/services/auth/bloc/auth_event.dart';
+import 'package:lokalektinger/services/auth/bloc/auth_state.dart';
 // import 'dart:developer' as devtools show log;
 
 import 'package:lokalektinger/utilities/dialogs/error_dialog.dart';
-
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -66,37 +66,31 @@ class _LoginViewState extends State<LoginView> {
                       hintText: "Enter Your Password Here",
                     ),
                   ),
-                  TextButton(
-                    onPressed: () async {
-                      final email = _email.text;
-                      final password = _password.text;
-
-                      try {
-                        
-                        context.read<AuthBloc>().add(
-                              AuthEventLogin(
-                                email,
-                                password,
-                              ),
-                            );
-                        //devtools.log(userCredential.toString());
-                        
-                        
-                      } on WrongCredentialsAuthException {
-                         await showErrorDialog(
-                            context,
-                            "Invalid Credentials",
-                          );
-                      } on GenericAuthException {
-                        await showErrorDialog(
-                            context,
-                            "Authentication Error",
-                          );
-                      };
-                      
-                     
+                  BlocListener<AuthBloc, AuthState>(
+                    listener: (context, state) async {
+                      if (state is AuthStateLoggedOut) {
+                        if (state.exception  is WrongCredentialsAuthException) {
+                          await showErrorDialog(context, "Invalid Credentials");
+                        } else if (state.exception is GenericAuthException){
+                          await showErrorDialog(context, "Error!");
+                        }
+                      }
                     },
-                    child: const Text("Login"),
+                    child: TextButton(
+                      onPressed: () async {
+                        final email = _email.text;
+                        final password = _password.text;
+
+                        context.read<AuthBloc>().add(
+                                AuthEventLogin(
+                                  email,
+                                  password,
+                                ),
+                              );
+                          //devtools.log(userCredential.toString());
+                      },
+                      child: const Text("Login"),
+                    ),
                   ),
                   TextButton(
                     onPressed: () {
