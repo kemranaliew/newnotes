@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lokalektinger/constants/routes.dart';
 import 'package:lokalektinger/services/auth/auth_exceptions.dart';
 import 'package:lokalektinger/services/auth/auth_service.dart';
-import 'dart:developer' as devtools show log;
+import 'package:lokalektinger/services/auth/bloc/auth_bloc.dart';
+import 'package:lokalektinger/services/auth/bloc/auth_event.dart';
+// import 'dart:developer' as devtools show log;
 
 import 'package:lokalektinger/utilities/dialogs/error_dialog.dart';
 
@@ -70,15 +73,15 @@ class _LoginViewState extends State<LoginView> {
 
                       try {
                         
-                        final userCredential = await AuthService.firebase().logIn(
-                          email: email,
-                          password: password,
-                        );
-                        devtools.log(userCredential.toString());
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                          homePageRoute,
-                          (route) => false,
-                        );
+                        context.read<AuthBloc>().add(
+                              AuthEventLogin(
+                                email,
+                                password,
+                              ),
+                            );
+                        //devtools.log(userCredential.toString());
+                        
+                        
                       } on WrongCredentialsAuthException {
                          await showErrorDialog(
                             context,
