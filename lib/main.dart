@@ -6,7 +6,6 @@ import 'package:lokalektinger/services/auth/bloc/auth_bloc.dart';
 import 'package:lokalektinger/services/auth/bloc/auth_event.dart';
 import 'package:lokalektinger/services/auth/bloc/auth_state.dart';
 import 'package:lokalektinger/services/auth/firebase_auth_provider.dart';
-import 'package:lokalektinger/views/email_verified_now.dart';
 import 'package:lokalektinger/views/login_view.dart';
 import 'package:lokalektinger/views/notes/create_update_note_view.dart';
 import 'package:lokalektinger/views/notes/notes_view.dart';
@@ -28,11 +27,7 @@ void main() async {
         child: const HomePage(),
       ),
       routes: {
-        loginRoute: (context) => const LoginView(),
-        registerRoute: (context) => const RegisterView(),
-        emailVerifiedRoute: (context) => const EmailVerifiedNow(),
-        notesRoute: (context) => const NotesView(),
-        homePageRoute: (context) => const HomePage(),
+
         createOrUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
       },
     ),
@@ -53,6 +48,8 @@ class HomePage extends StatelessWidget {
         return const VerifyEmailView();
         } else if (state is AuthStateLoggedOut){
         return const LoginView();
+      } else if (state is AuthStateRegistering){
+        return const RegisterView();
       } else {
         return const Scaffold(
           body: CircularProgressIndicator(),

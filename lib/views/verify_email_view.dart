@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:lokalektinger/constants/routes.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lokalektinger/services/auth/auth_service.dart';
+import 'package:lokalektinger/services/auth/bloc/auth_bloc.dart';
+import 'package:lokalektinger/services/auth/bloc/auth_event.dart';
 import 'package:lokalektinger/views/email_verified_now.dart';
 import 'package:lokalektinger/views/register_view.dart';
 import 'dart:developer' as devtools show log;
@@ -84,17 +86,19 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                       const Text(
                           "If you haven't received any email yet, press the button below."),
                       TextButton(
-                        onPressed: () async {
-                          await AuthService.firebase().sendEmailVerification();
+                        onPressed: () {
+                          context
+                              .read<AuthBloc>()
+                              .add(const AuthEventSendEmailVerification());
                         },
                         child: const Text("Send email verification"),
                       ),
                       const Text("Your Email is not verified"),
                       TextButton(
                           onPressed: () async {
-                            await AuthService.firebase().logOut();
-                            Navigator.of(context).pushNamedAndRemoveUntil(
-                                registerRoute, (_) => false);
+                            context.read<AuthBloc>().add(
+                                  const AuthEventLogout(),
+                                );
                           },
                           child: const Text("Restart"))
                     ],
