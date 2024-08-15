@@ -4,38 +4,38 @@ import 'package:lokalektinger/services/auth/auth_user.dart';
 import 'package:lokalektinger/services/auth/auth_provider.dart';
 import 'package:lokalektinger/services/auth/auth_exceptions.dart';
 
-import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth, FirebaseAuthException;
+import 'package:firebase_auth/firebase_auth.dart'
+    show FirebaseAuth, FirebaseAuthException;
 
 class FirebaseAuthProvider implements AuthProvider {
   @override
   Future<AuthUser> createUser({
-    required String email, 
+    required String email,
     required String password,
-    
-    }) async {
+  }) async {
     try {
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email, 
+        email: email,
         password: password,
-        );
-        final user = currentUser;
-        if (user != null) {
-          return user;
-        } else {
-          throw UserNotLoggedInAuthException();
-        }
-    } on FirebaseAuthException catch(e) {
+      );
+      final user = currentUser;
+      if (user != null) {
+        return user;
+      } else {
+        throw UserNotLoggedInAuthException();
+      }
+    } on FirebaseAuthException catch (e) {
       if (e.code == "weak-password") {
-            throw  WeakPasswordAuthException();
-        } else if (e.code == "email-already-in-use") {
-            throw EmailAlreadyInUseAuthException();
-        } else if (e.code == "inavlid-email") {
-            throw InvalidEmailAuthException();
-        } else {
-            throw GenericAuthException();
-        }
-    } catch (_) {
+        throw WeakPasswordAuthException();
+      } else if (e.code == "email-already-in-use") {
+        throw EmailAlreadyInUseAuthException();
+      } else if (e.code == "inavlid-email") {
+        throw InvalidEmailAuthException();
+      } else {
         throw GenericAuthException();
+      }
+    } catch (_) {
+      throw GenericAuthException();
     }
   }
 
@@ -51,27 +51,30 @@ class FirebaseAuthProvider implements AuthProvider {
 
   @override
   Future<AuthUser> logIn({
-    required String email, 
+    required String email,
     required String password,
-    }) async {
+  }) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+      await Future.delayed(const Duration(milliseconds: 1500));
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       final user = currentUser;
       if (user != null) {
-          return user;
-        } else {
-          throw UserNotLoggedInAuthException();
-        }
-    } on FirebaseAuthException catch(e) {
-      
-    if(e.code == "invalid-credential"){
-      throw WrongCredentialsAuthException();
-                  } else {
-                    throw GenericAuthException();
-                  }
-                } catch (_) {
-                  throw GenericAuthException();
-                }
+        return user;
+      } else {
+        throw UserNotLoggedInAuthException();
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "invalid-credential") {
+        throw WrongCredentialsAuthException();
+      } else {
+        throw GenericAuthException();
+      }
+    } catch (_) {
+      throw GenericAuthException();
+    }
   }
 
   @override
@@ -93,19 +96,19 @@ class FirebaseAuthProvider implements AuthProvider {
       throw UserNotLoggedInAuthException();
     }
   }
-  
+
   @override
   Future<void> initialize() async {
     await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
-  
+
   @override
   Future<void> reloadUser() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await user.reload();
-  }
+    }
   }
 }
