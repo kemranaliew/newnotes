@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lokalektinger/services/auth/auth_service.dart';
 import 'package:lokalektinger/services/auth/bloc/auth_bloc.dart';
 import 'package:lokalektinger/services/auth/bloc/auth_event.dart';
-import 'package:lokalektinger/views/email_verified_now.dart';
+import 'package:lokalektinger/views/notes/notes_view.dart';
 import 'package:lokalektinger/views/register_view.dart';
 import 'dart:developer' as devtools show log;
 
@@ -27,7 +27,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   }
 
   void _startEmailVerificationCheck() {
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+    _timer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       await AuthService.firebase().reloadUser();
       final user = AuthService.firebase().currentUser;
       devtools.log(user.toString());
@@ -61,7 +61,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               if (snapshot.connectionState == ConnectionState.done) {
                 final user = AuthService.firebase().currentUser;
                 if (user?.isEmailVerified ?? false) {
-                  return const EmailVerifiedNow();
+                  return const NotesView();
                 } else if (user == null) {
                   return Column(
                     children: [

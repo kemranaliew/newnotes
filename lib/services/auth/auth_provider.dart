@@ -14,4 +14,5 @@ Future<AuthUser> createUser ({
 Future<void> logOut();
 Future<void> sendEmailVerification();
 Future<void> reloadUser();
+Future<void>sendPasswordReset({required String toEmail});
 } 
